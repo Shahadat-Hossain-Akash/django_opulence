@@ -21,8 +21,10 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
 ]
+
+CORS_ALLOW_ALL_ORIGINS=True
 CORS_ALLOW_CREDENTIALS = True
-CORS_REPLACE_HTTPS_REFERER = True
+#CORS_REPLACE_HTTPS_REFERER = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -40,9 +42,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -50,7 +52,7 @@ MIDDLEWARE = [
     # "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
-CORS_ALLOW_ALL_ORIGINS=True
+
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -110,6 +112,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
