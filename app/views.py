@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model, login, logout
 from django.core.exceptions import ValidationError
 from django.db.models import Case, DecimalField, F, Sum, Value, When
-from django.middleware.csrf import get_token
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, permissions, serializers, status, viewsets
 from rest_framework.authentication import SessionAuthentication
@@ -62,13 +61,12 @@ class UserLogin(
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
     serializer_class = UserLoginSerializer
-    
+
     def get_queryset(self):
         return None
 
     def create(self, request):
-        csrf_token = get_token(request)
-        headers = {"token": csrf_token}
+
         serializer = self.get_serializer(
             data=request.data,
         )
@@ -76,35 +74,40 @@ class UserLogin(
             user = serializer.check_user(request.data)
             login(request, user)
             data = serializer.data
-            data.update(headers) 
-            return Response(data, status=status.HTTP_200_OK,)
+            return Response(
+                data,
+                status=status.HTTP_200_OK,
+            )
 
 
 class UserLogout(
     viewsets.GenericViewSet,
     generics.CreateAPIView,
 ):
-    authentication_classes = [SessionAuthentication,]
+    authentication_classes = [
+        SessionAuthentication,
+    ]
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.Serializer
 
     def create(self, request):
         logout(request)
-        return Response(status=status.HTTP_200_OK)
+        return Response(
+            {"detail": "Successfully logged out."}, status=status.HTTP_200_OK
+        )
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
 
     serializer_class = CategorySerializer
     permission_classes = (permissions.IsAdminUser,)
-    
+
     def get_queryset(self):
         user = self.request.user
         queryset = Category.objects.annotate(
-            transaction_count=Count('transaction', filter=Q(transaction__user=user))
+            transaction_count=Count("transaction", filter=Q(transaction__user=user))
         )
         return queryset
-
 
 
 class TransactionViewSet(viewsets.ModelViewSet):
