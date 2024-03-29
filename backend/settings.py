@@ -13,7 +13,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['.now.sh', '.vercel.app', '127.0.0.1', 'localhost']
 
@@ -21,11 +21,18 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
 ]
-
-CORS_ALLOW_ALL_ORIGINS=True
+CORS_EXPOSE_HEADERS = ['Content-type', 'X-CSRFToken']
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
 #CORS_REPLACE_HTTPS_REFERER = True
-CSRF_COOKIE_SAMESITE = 'None'
+
+
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_HTTPONLY = True
 
 
 INSTALLED_APPS = [

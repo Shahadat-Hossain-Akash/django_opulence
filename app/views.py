@@ -6,6 +6,8 @@ from rest_framework import generics, permissions, serializers, status, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
 
 from .filters import TransactionFilter
 from .models import Category, Transaction
@@ -30,6 +32,18 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return user.objects.all()
 
     serializer_class = UserSerializer
+
+
+class CSRF(viewsets.ViewSet):
+    permission_classes = (permissions.AllowAny,)
+    def get_csrf(self, request):
+        csrf_token = get_token(request)
+        response = JsonResponse({"info": "Set csrf token successfully"})
+        response["X-CSRFToken"] = csrf_token
+        return response
+
+    def list(self, request):
+        return self.get_csrf(request)
 
 
 class UserRegister(

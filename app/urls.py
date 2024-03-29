@@ -7,6 +7,7 @@ from .views import (
     UserRegister,
     UserLogin,
     UserLogout,
+    CSRF
 )
 
 router = routers.DefaultRouter()
@@ -16,6 +17,7 @@ router.register(r"users", UserViewSet, basename="users")
 router.register(r"register", UserRegister, basename="register")
 router.register(r"login", UserLogin, basename="login")
 router.register(r"logout", UserLogout, basename="logout")
+router.register(r"csrf", CSRF, basename='csrf')
 
 urlpatterns = [
     path("", include(router.urls)),
